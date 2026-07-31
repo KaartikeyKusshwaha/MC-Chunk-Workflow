@@ -54,7 +54,7 @@ Importing a full Minecraft world into Blender means **thousands of objects and m
 ### Method B — Install from source
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/MC-Chunk-Workflow.git
+git clone https://github.com/KaartikeyKusshwaha/MC-Chunk-Workflow.git
 ```
 
 Then zip the `mc_chunk_workflow/` folder and install via Blender Preferences as above,  

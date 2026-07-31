@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # MC Chunk Workflow — Blender addon
-# https://github.com/YOUR_USERNAME/MC-Chunk-Workflow
+# https://github.com/KaartikeyKusshwaha/MC-Chunk-Workflow
 
 bl_info = {
     "name": "MC Chunk Workflow",
-    "author": "Your Name",
+    "author": "KaartikeyKusshwaha",
     "version": (1, 0, 0),
     "blender": (4, 0, 0),
     "location": "3D Viewport > N-sidebar > MC World",
@@ -15,8 +15,8 @@ bl_info = {
         "and snap the view to the nearest chunk."
     ),
     "category": "3D View",
-    "doc_url": "https://github.com/YOUR_USERNAME/MC-Chunk-Workflow#readme",
-    "tracker_url": "https://github.com/YOUR_USERNAME/MC-Chunk-Workflow/issues",
+    "doc_url": "https://github.com/KaartikeyKusshwaha/MC-Chunk-Workflow#readme",
+    "tracker_url": "https://github.com/KaartikeyKusshwaha/MC-Chunk-Workflow/issues",
 }
 
 from . import operators, panel, chunk_utils  # noqa: E402 – imported after bl_info
