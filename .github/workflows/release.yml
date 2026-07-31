@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"   # triggers on tags like v1.0.0, v1.2.3, etc.
+
+jobs:
+  build-and-release:
+    name: Build addon zip & create GitHub Release
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # needed to create releases and upload assets
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build release zip
+        run: python scripts/build_release.py
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release and upload zip
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "MC Chunk Workflow v${{ steps.version.outputs.VERSION }}"
+          body: |
+            ## Installation
+
+            1. Download **mc_chunk_workflow_v${{ steps.version.outputs.VERSION }}.zip** below.
+            2. In Blender: **Edit → Preferences → Add-ons → Install…**
+            3. Select the downloaded `.zip` file.
+            4. Enable **MC Chunk Workflow** in the add-on list.
+            5. Open the **3D Viewport → N-sidebar → MC World** tab.
+
+            See the [README](https://github.com/${{ github.repository }}#readme) for full usage.
+          files: dist/mc_chunk_workflow_v${{ steps.version.outputs.VERSION }}.zip
+          fail_on_unmatched_files: true

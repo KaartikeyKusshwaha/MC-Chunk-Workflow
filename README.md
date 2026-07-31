@@ -6,7 +6,11 @@
 ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
 ![Version](https://img.shields.io/badge/version-1.0.0-green)
 
----
+> [!IMPORTANT]
+> **Download from the [Releases](../../releases/latest) page — not the green "Code → Download ZIP" button.**
+> The release zip is the ready-to-install Blender addon. The code zip includes the whole repo
+> and will not install correctly.
+
 
 ## The Problem
 
