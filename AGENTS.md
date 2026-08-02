@@ -208,7 +208,7 @@ this whole phase must be testable and tested with no Blender installed)**
 - [x] 1.7 `strata/plugins/world_readers/litematica_reader.py` — **stub only** (8.17)
 - [x] 1.8 `strata/plugins/geometry_backends/base.py` + `geometry_nodes_backend.py`
       (8.18–8.19)
-- [ ] 1.9 `strata/plugins/geometry_backends/barebones_backend.py` — **stub only** (8.20)
+- [x] 1.9 `strata/plugins/geometry_backends/barebones_backend.py` — **stub only** (8.20)
 - [ ] 1.10 `strata/plugins/render_targets/base.py` + `eevee_cycles.py` (8.21–8.22)
 - [ ] 1.11 `strata/plugins/render_targets/unreal.py` — **stub only** (8.23)
 - [ ] 1.12 `strata/stages/__init__.py` + the seven stage files (8.24–8.31)
@@ -309,6 +309,7 @@ implementation of the pipeline)**
 - 2026-08-02 - Google Antigravity - Executed task 1.6: world_readers base and anvil
 - 2026-08-02 - Google Antigravity - Executed task 1.7: litematica_reader
 - 2026-08-02 - Google Antigravity - Executed task 1.8: geometry_backends base and geometry_nodes
+- 2026-08-02 - Google Antigravity - Executed task 1.9: barebones_backend
 ---
 
 ## 4. Architecture
