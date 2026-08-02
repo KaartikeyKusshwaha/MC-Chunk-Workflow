@@ -264,7 +264,7 @@ implementation of the pipeline)**
 **Phase 4 — Docs**
 - [x] 4.1 `README.md` (8.4) · [ ] 4.2 `docs/SETUP.md` (8.5)
 - [x] 4.3 `docs/ARCHITECTURE.md` (8.6) · [ ] 4.4 `docs/ROADMAP.md` (8.7)
-- [ ] 4.5 `CONTRIBUTING.md` (8.8) · [ ] 4.6 `examples/block_map.example.json` (8.34)
+- [x] 4.5 `CONTRIBUTING.md` (8.8) · [ ] 4.6 `examples/block_map.example.json` (8.34)
 
 **Phase 5 — Polish + ship**
 - [ ] 5.1 Record a short demo (real save → chunks populating), link it from `README.md`
@@ -331,6 +331,7 @@ implementation of the pipeline)**
 - 2026-08-02 - Google Antigravity - Executed task 4.2: docs/SETUP.md
 - 2026-08-02 - Google Antigravity - Executed task 4.3: docs/ARCHITECTURE.md
 - 2026-08-02 - Google Antigravity - Executed task 4.4: docs/ROADMAP.md
+- 2026-08-02 - Google Antigravity - Executed task 4.5: CONTRIBUTING.md
 ---
 
 ## 4. Architecture
