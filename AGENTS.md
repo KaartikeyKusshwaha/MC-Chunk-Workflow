@@ -241,7 +241,7 @@ Avoid hidden state whenever practical.
 **Phase 2 — Blender integration (driven by the pipeline; not the product)**
 - [x] 2.1 `addon/__init__.py` (8.37) · [x] 2.2 `addon/bridge_server.py` (8.38)
 - [x] 2.3 `addon/chunk_workflow/{__init__,panel,operators}.py` (8.39–8.41)
-- [ ] 2.4 `addon/world_import/{__init__,operators}.py` (8.42–8.43)
+- [x] 2.4 `addon/world_import/{__init__,operators}.py` (8.42–8.43)
 - [ ] 2.5 `scripts/install_addon.py` (8.44) — one-command installer so "the
       pipeline installs the add-on automatically" is true in practice: `blender
       --background --python scripts/install_addon.py` copies `addon/` into
@@ -344,6 +344,8 @@ implementation of the pipeline)**
 - 2026-08-02 — Codex — Added the main-thread-safe named-command bridge from Section 8.38; live add-on registration is verified at item 2.6.
 
 - 2026-08-02 — Codex — Added and exercised the reference chunk-visibility commands from Sections 8.39–8.41, pending the dedicated real-source replacement check.
+
+- 2026-08-02 — Codex — Added the world-import bridge commands from Sections 8.42–8.43; real add-on installation and end-to-end import validation follow the prescribed Phase 2 gates.
 
 ## 4. Architecture
 
