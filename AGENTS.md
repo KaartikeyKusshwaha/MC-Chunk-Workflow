@@ -203,7 +203,7 @@ this whole phase must be testable and tested with no Blender installed)**
       this is Stage 4's logic, kept separate from the world-reader plugin so a
       better culling algorithm doesn't require touching Stage 1
 - [x] 1.4 `strata/block_library.py` (8.13)
-- [ ] 1.5 `strata/plugins/base.py` (8.14) — the entry-point discovery helper
+- [x] 1.5 `strata/plugins/base.py` (8.14) — the entry-point discovery helper
 - [ ] 1.6 `strata/plugins/world_readers/base.py` + `anvil_reader.py` (8.15–8.16)
 - [ ] 1.7 `strata/plugins/world_readers/litematica_reader.py` — **stub only** (8.17)
 - [ ] 1.8 `strata/plugins/geometry_backends/base.py` + `geometry_nodes_backend.py`
@@ -314,6 +314,8 @@ implementation of the pipeline)**
 - 2026-08-02 — Codex — Added and exercised conservative hidden-block culling from Section 8.12.
 
 - 2026-08-02 — Codex — Added and exercised user block-map loading and prototype-name resolution from Section 8.13.
+
+- 2026-08-02 — Codex — Added and exercised entry-point plugin discovery from Section 8.14.
 
 ## 4. Architecture
 
