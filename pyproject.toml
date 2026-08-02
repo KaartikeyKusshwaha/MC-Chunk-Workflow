@@ -30,3 +30,6 @@ eevee_cycles = "strata.plugins.render_targets.eevee_cycles:EeveeCyclesTarget"
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ['strata*']

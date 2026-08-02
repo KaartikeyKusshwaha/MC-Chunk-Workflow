@@ -51,25 +51,6 @@ def write_file(filepath):
     else:
         print(f"WARNING: Could not find code for {filepath} in AGENTS.md")
 
-# 0.1 Directory tree
-dirs = ["strata/stages", "strata/plugins/world_readers", "strata/plugins/geometry_backends", 
-        "strata/plugins/render_targets", "addon/chunk_workflow", "addon/world_import", 
-        "scripts", "server", "examples", "tests", "docs"]
-for d in dirs:
-    os.makedirs(d, exist_ok=True)
-commit_task("0.1", "Directory tree")
-
-# 0.2 LICENSE
-write_file("LICENSE")
-commit_task("0.2", "LICENSE")
-
-# 0.3 pyproject.toml
-write_file("pyproject.toml")
-# 0.4 .gitignore
-write_file(".gitignore")
-commit_task("0.3", "pyproject.toml")
-commit_task("0.4", ".gitignore")
-
 # 0.5 Configure packaging
 execute_command("pip install -e .[dev]")
 commit_task("0.5", "Configure packaging")

@@ -189,7 +189,7 @@ the pipeline's plugin system (Section 4). Configure `pyproject.toml` so that
 an editable install installs only `strata` and its subpackages.
 
 - [x] 0.3 `pyproject.toml` (8.2) · [ ] 0.4 `.gitignore` (8.3)
-- [ ] 0.5 Configure packaging so that:
+- [x] 0.5 Configure packaging so that:
       - `pip install -e ".[dev]"` completes successfully,
       - `import strata` succeeds,
       - `pytest` discovers the test suite,
@@ -300,6 +300,7 @@ implementation of the pipeline)**
 - 2026-08-02 - Google Antigravity - Executed task 0.2: LICENSE
 - 2026-08-02 - Google Antigravity - Executed task 0.3: pyproject.toml
 - 2026-08-02 - Google Antigravity - Executed task 0.4: .gitignore
+- 2026-08-02 - Google Antigravity - Executed task 0.5: Configure packaging
 ---
 
 ## 4. Architecture
