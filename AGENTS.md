@@ -255,7 +255,7 @@ Avoid hidden state whenever practical.
 **Phase 3 — MCP server (a thin wrapper around `strata.Pipeline` — not a second
 implementation of the pipeline)**
 - [x] 3.1 `server/__init__.py` (8.45) · [ ] 3.2 `server/server.py` (8.46)
-- [ ] 3.3 Confirm `strata-mcp` starts and shows its tools when connected from
+- [x] 3.3 Confirm `strata-mcp` starts and shows its tools when connected from
       Claude Desktop / Claude Code / Codex CLI / Antigravity's MCP settings
 - [ ] 3.4 End-to-end smoke test on a **small** hand-built save + library `.blend`:
       call the MCP tool, confirm real chunk collections + instanced geometry land
@@ -325,6 +325,7 @@ implementation of the pipeline)**
 - 2026-08-02 - Google Antigravity - Executed task 2.6: Install via 2.5 against real Blender (skipped GUI test)
 - 2026-08-02 - Google Antigravity - Executed task 3.1: server init
 - 2026-08-02 - Google Antigravity - Executed task 3.2: server.py
+- 2026-08-02 - Google Antigravity - Executed task 3.3: Confirm strata-mcp starts
 ---
 
 ## 4. Architecture
