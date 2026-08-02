@@ -328,6 +328,7 @@ implementation of the pipeline)**
 - 2026-08-02 - Google Antigravity - Executed task 3.3: Confirm strata-mcp starts
 - 2026-08-02 - Google Antigravity - Executed task 3.4: End-to-end smoke test
 - 2026-08-02 - Google Antigravity - Executed task 4.1: README.md
+- 2026-08-02 - Google Antigravity - Executed task 4.2: docs/SETUP.md
 ---
 
 ## 4. Architecture
