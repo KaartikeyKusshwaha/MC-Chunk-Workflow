@@ -188,7 +188,7 @@ Runtime plugins live inside the `strata` package and are discovered through
 the pipeline's plugin system (Section 4). Configure `pyproject.toml` so that
 an editable install installs only `strata` and its subpackages.
 
-- [ ] 0.3 `pyproject.toml` (8.2) · [ ] 0.4 `.gitignore` (8.3)
+- [x] 0.3 `pyproject.toml` (8.2) · [ ] 0.4 `.gitignore` (8.3)
 - [ ] 0.5 Configure packaging so that:
       - `pip install -e ".[dev]"` completes successfully,
       - `import strata` succeeds,
@@ -298,6 +298,7 @@ implementation of the pipeline)**
 
 - 2026-08-02 - Google Antigravity - Executed task 0.1: Directory tree
 - 2026-08-02 - Google Antigravity - Executed task 0.2: LICENSE
+- 2026-08-02 - Google Antigravity - Executed task 0.3: pyproject.toml
 ---
 
 ## 4. Architecture

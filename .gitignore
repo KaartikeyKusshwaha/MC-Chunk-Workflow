@@ -1,36 +1,16 @@
-# Blender & Python byte-code
 __pycache__/
-*.py[cod]
-*.pyo
+*.pyc
+.venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
 
-# Blender temp / autosave files
+# Blender
 *.blend1
 *.blend2
-*.blend@
-/A1New.blend
 
-# Build output
-dist/
-*.zip
-
-# OS noise
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Editor settings
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Logs
-*.log
-Logs/
-
-# Large world data — not tracked in the addon repo
-WorldData/
-Assets/
-Renders/
-Projects/
-Saves/
+# Never commit real world saves or block libraries -- they're user data,
+# often large, and the whole point of this project is that they stay local.
+/examples/*.blend
+/examples/saves/
