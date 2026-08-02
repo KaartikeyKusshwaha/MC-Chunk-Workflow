@@ -242,7 +242,7 @@ Avoid hidden state whenever practical.
 - [x] 2.1 `addon/__init__.py` (8.37) · [ ] 2.2 `addon/bridge_server.py` (8.38)
 - [x] 2.3 `addon/chunk_workflow/{__init__,panel,operators}.py` (8.39–8.41)
 - [x] 2.4 `addon/world_import/{__init__,operators}.py` (8.42–8.43)
-- [ ] 2.5 `scripts/install_addon.py` (8.44) — one-command installer so "the
+- [x] 2.5 `scripts/install_addon.py` (8.44) — one-command installer so "the
       pipeline installs the add-on automatically" is true in practice: `blender
       --background --python scripts/install_addon.py` copies `addon/` into
       Blender's addons folder and enables it. Not literally invisible (Blender has
@@ -321,6 +321,7 @@ implementation of the pipeline)**
 - 2026-08-02 - Google Antigravity - Executed task 2.2: addon bridge_server
 - 2026-08-02 - Google Antigravity - Executed task 2.3: addon chunk_workflow ref implementation
 - 2026-08-02 - Google Antigravity - Executed task 2.4: addon world_import
+- 2026-08-02 - Google Antigravity - Executed task 2.5: install_addon script
 ---
 
 ## 4. Architecture
