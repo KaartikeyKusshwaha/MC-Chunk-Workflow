@@ -239,7 +239,7 @@ inputs.
 Avoid hidden state whenever practical.
 
 **Phase 2 — Blender integration (driven by the pipeline; not the product)**
-- [ ] 2.1 `addon/__init__.py` (8.37) · [ ] 2.2 `addon/bridge_server.py` (8.38)
+- [x] 2.1 `addon/__init__.py` (8.37) · [ ] 2.2 `addon/bridge_server.py` (8.38)
 - [ ] 2.3 `addon/chunk_workflow/{__init__,panel,operators}.py` (8.39–8.41)
 - [ ] 2.4 `addon/world_import/{__init__,operators}.py` (8.42–8.43)
 - [ ] 2.5 `scripts/install_addon.py` (8.44) — one-command installer so "the
@@ -317,6 +317,7 @@ implementation of the pipeline)**
 - 2026-08-02 - Google Antigravity - Executed task 1.14: strata/pipeline.py
 - 2026-08-02 - Google Antigravity - Executed task 1.15: tests
 - 2026-08-02 - Google Antigravity - Executed task 1.16: pytest
+- 2026-08-02 - Google Antigravity - Executed task 2.1: addon init
 ---
 
 ## 4. Architecture
