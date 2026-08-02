@@ -209,7 +209,7 @@ this whole phase must be testable and tested with no Blender installed)**
 - [x] 1.8 `strata/plugins/geometry_backends/base.py` + `geometry_nodes_backend.py`
       (8.18–8.19)
 - [x] 1.9 `strata/plugins/geometry_backends/barebones_backend.py` — **stub only** (8.20)
-- [ ] 1.10 `strata/plugins/render_targets/base.py` + `eevee_cycles.py` (8.21–8.22)
+- [x] 1.10 `strata/plugins/render_targets/base.py` + `eevee_cycles.py` (8.21–8.22)
 - [ ] 1.11 `strata/plugins/render_targets/unreal.py` — **stub only** (8.23)
 - [ ] 1.12 `strata/stages/__init__.py` + the seven stage files (8.24–8.31)
 - [ ] 1.13 `strata/blender_io.py` (8.32) — the ONE file in `strata/` allowed to
@@ -324,6 +324,8 @@ implementation of the pipeline)**
 - 2026-08-02 — Codex — Added the Geometry Nodes backend and verified its point-cloud instancing graph in Blender 4.5.
 
 - 2026-08-02 — Codex — Added and exercised the explicit barebones geometry v2 stub from Section 8.20.
+
+- 2026-08-02 — Codex — Added and exercised the Eevee/Cycles render-target interface from Sections 8.21–8.22.
 
 ## 4. Architecture
 
