@@ -215,7 +215,7 @@ this whole phase must be testable and tested with no Blender installed)**
 - [x] 1.13 `strata/blender_io.py` (8.32) — the ONE file in `strata/` allowed to
       assume a live Blender bridge exists (it still doesn't `import bpy` itself —
       it's a socket client, see Section 4)
-- [ ] 1.14 `strata/pipeline.py` (8.33) — wire it all together as the `Pipeline` class
+- [x] 1.14 `strata/pipeline.py` (8.33) — wire it all together as the `Pipeline` class
 - [ ] 1.15 `tests/test_world_reader.py` (8.35), `tests/test_pipeline.py` (8.36)
 - [ ] 1.16 Run `pytest tests/` — **must pass before Phase 2.** `test_world_reader`
       is the empirical check on the coordinate-convention uncertainty flagged
@@ -314,6 +314,7 @@ implementation of the pipeline)**
 - 2026-08-02 - Google Antigravity - Executed task 1.11: render_targets unreal
 - 2026-08-02 - Google Antigravity - Executed task 1.12: strata stages
 - 2026-08-02 - Google Antigravity - Executed task 1.13: strata/blender_io.py
+- 2026-08-02 - Google Antigravity - Executed task 1.14: strata/pipeline.py
 ---
 
 ## 4. Architecture
