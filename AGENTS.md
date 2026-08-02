@@ -198,7 +198,7 @@ an editable install installs only `strata` and its subpackages.
 **Phase 1 — `strata/` core (pure Python, zero `bpy` import at module scope —
 this whole phase must be testable and tested with no Blender installed)**
 - [x] 1.1 `strata/__init__.py` (8.9), `strata/pipeline_state.py` (8.10)
-- [ ] 1.2 `strata/chunking.py` (8.11) — pure math, do this first
+- [x] 1.2 `strata/chunking.py` (8.11) — pure math, do this first
 - [ ] 1.3 `strata/culling.py` (8.12) — hidden-block culling, also pure math;
       this is Stage 4's logic, kept separate from the world-reader plugin so a
       better culling algorithm doesn't require touching Stage 1
@@ -308,6 +308,8 @@ implementation of the pipeline)**
 - 2026-08-02 — Codex — Configured Strata-only package discovery; editable installation, import scope, and pytest readiness were verified in an isolated environment.
 
 - 2026-08-02 — Codex — Added the shared PipelineState model and Strata package interface from Sections 8.9–8.10.
+
+- 2026-08-02 — Codex — Added and exercised deterministic block-to-chunk grouping from Section 8.11.
 
 ## 4. Architecture
 
