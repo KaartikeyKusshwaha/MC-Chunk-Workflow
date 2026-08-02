@@ -280,6 +280,8 @@ implementation of the pipeline)**
 
 - 2026-08-02 — Codex — Added the Section 8.3 ignore policy for build artifacts and local user data.
 
+- 2026-08-02 — Codex — Checklist 0.5 is blocked: the prescribed packaging config fails flat-layout discovery with multiple top-level packages; awaiting an approved discovery rule.
+
 ## 4. Architecture
 
 ```mermaid
