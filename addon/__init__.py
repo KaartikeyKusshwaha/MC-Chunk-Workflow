@@ -11,9 +11,8 @@ bl_info = {
 import bpy
 
 from . import bridge_server
-from .chunk_workflow import operators as chunk_ops
-from .chunk_workflow import panel as chunk_panel
-from .world_import import operators as world_ops  # noqa: F401  (import registers its bridge commands)
+from . import chunk_workflow
+from .world_import import operators as world_ops  # noqa: F401
 
 
 class STRATA_OT_start_server(bpy.types.Operator):
@@ -36,14 +35,13 @@ class STRATA_OT_stop_server(bpy.types.Operator):
 
 
 ALL_CLASSES = (
-    *chunk_ops.CLASSES,
-    *chunk_panel.CLASSES,
     STRATA_OT_start_server,
     STRATA_OT_stop_server,
 )
 
 
 def register():
+    chunk_workflow.register()
     for cls in ALL_CLASSES:
         bpy.utils.register_class(cls)
 
@@ -52,3 +50,4 @@ def unregister():
     bridge_server.stop()
     for cls in reversed(ALL_CLASSES):
         bpy.utils.unregister_class(cls)
+    chunk_workflow.unregister()
