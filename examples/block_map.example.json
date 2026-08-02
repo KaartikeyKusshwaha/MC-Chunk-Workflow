@@ -1,0 +1,10 @@
+{
+  "oak_planks": "OakPlank_Proto",
+  "oak_log": "OakLog_Proto",
+  "stone": "Stone_Proto",
+  "cobblestone": "Cobblestone_Proto",
+  "dirt": "Dirt_Proto",
+  "grass_block": "GrassBlock_Proto",
+  "glass": "Glass_Proto",
+  "water": "Water_Proto"
+}
