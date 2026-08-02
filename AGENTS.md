@@ -169,7 +169,7 @@ Do not optimize unfinished systems.
 
 **Phase 0 — Repo scaffold**
 - [x] 0.1 `git init`; create the directory tree in Section 5
-- [ ] 0.2 `LICENSE` (8.1)
+- [x] 0.2 `LICENSE` (8.1)
 
 ### Packaging Layout
 
@@ -297,6 +297,7 @@ implementation of the pipeline)**
   Phase 0 starts fresh either way.
 
 - 2026-08-02 - Google Antigravity - Executed task 0.1: Directory tree
+- 2026-08-02 - Google Antigravity - Executed task 0.2: LICENSE
 ---
 
 ## 4. Architecture
