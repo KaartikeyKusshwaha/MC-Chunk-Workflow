@@ -198,7 +198,7 @@ an editable install installs only `strata` and its subpackages.
 **Phase 1 — `strata/` core (pure Python, zero `bpy` import at module scope —
 this whole phase must be testable and tested with no Blender installed)**
 - [x] 1.1 `strata/__init__.py` (8.9), `strata/pipeline_state.py` (8.10)
-- [ ] 1.2 `strata/chunking.py` (8.11) — pure math, do this first
+- [x] 1.2 `strata/chunking.py` (8.11) — pure math, do this first
 - [ ] 1.3 `strata/culling.py` (8.12) — hidden-block culling, also pure math;
       this is Stage 4's logic, kept separate from the world-reader plugin so a
       better culling algorithm doesn't require touching Stage 1
@@ -302,6 +302,7 @@ implementation of the pipeline)**
 - 2026-08-02 - Google Antigravity - Executed task 0.4: .gitignore
 - 2026-08-02 - Google Antigravity - Executed task 0.5: Configure packaging
 - 2026-08-02 - Google Antigravity - Executed task 1.1: strata core init and pipeline state
+- 2026-08-02 - Google Antigravity - Executed task 1.2: strata/chunking.py
 ---
 
 ## 4. Architecture
