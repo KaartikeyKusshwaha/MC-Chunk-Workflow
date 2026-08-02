@@ -1,0 +1,76 @@
+"""
+The single entry point most callers (agents included) should use:
+
+    from strata import Pipeline
+    (
+        Pipeline()
+        .load_world("world/")
+        .use_library("blocks.blend")
+        .optimize()
+        .build_chunks()
+        .prepare_render()
+        .save("scene.blend")
+    )
+
+Every method returns self, so calls chain. Each delegates to the matching
+stage -- see strata/stages/ and docs/ARCHITECTURE.md.
+"""
+from __future__ import annotations
+
+from typing import Optional
+
+from .pipeline_state import PipelineState
+from .stages import (
+    ReadWorldStage, ResolveAssetsStage, OptimizeStage, ChunkManagerStage,
+    BuildGeometryStage, RenderPrepStage, AnimationPrepStage,
+)
+from . import blender_io  # noqa: F401  (imported for save(); kept explicit for clarity)
+
+
+class Pipeline:
+    def __init__(self, chunk_size: int = 16, world_reader: str = "anvil", geometry_backend: str = "geometry_nodes"):
+        self._state = PipelineState(chunk_size=chunk_size)
+        self._world_reader_name = world_reader
+        self._geometry_backend_name = geometry_backend
+
+    def load_world(self, world_path: str, y_min: Optional[int] = None, y_max: Optional[int] = None) -> "Pipeline":
+        self._state = ReadWorldStage(reader_name=self._world_reader_name).run(
+            self._state, world_path=world_path, y_min=y_min, y_max=y_max
+        )
+        return self
+
+    def use_library(self, library_blend_path: str) -> "Pipeline":
+        self._state.library_blend_path = library_blend_path
+        return self
+
+    def use_block_map(self, block_map_path: str) -> "Pipeline":
+        self._state = ResolveAssetsStage().run(self._state, block_map_path=block_map_path)
+        return self
+
+    def optimize(self) -> "Pipeline":
+        self._state = OptimizeStage().run(self._state)
+        return self
+
+    def build_chunks(self) -> "Pipeline":
+        self._state = ChunkManagerStage().run(self._state)
+        self._state = BuildGeometryStage(backend_name=self._geometry_backend_name).run(self._state)
+        return self
+
+    def prepare_render(self, target: str = "eevee_cycles") -> "Pipeline":
+        self._state = RenderPrepStage(target=target).run(self._state)
+        return self
+
+    def prepare_animation(self) -> "Pipeline":
+        self._state = AnimationPrepStage().run(self._state)
+        return self
+
+    def save(self, output_blend_path: str) -> "Pipeline":
+        result = blender_io.call("save_scene", output_blend_path=output_blend_path)
+        self._state.stats.update(result)
+        return self
+
+    @property
+    def state(self) -> PipelineState:
+        """Read-only-by-convention access to the working state, e.g.
+        `pipeline.state.unmapped_block_ids` after `build_chunks()`."""
+        return self._state
