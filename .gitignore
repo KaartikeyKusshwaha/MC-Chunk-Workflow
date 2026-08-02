@@ -1,8 +1,16 @@
-.venv/
 __pycache__/
-*.py[cod]
+*.pyc
+.venv/
+*.egg-info/
+dist/
+build/
 .pytest_cache/
-.env
+
+# Blender
 *.blend1
-output/
-*.jsonl
+*.blend2
+
+# Never commit real world saves or block libraries -- they're user data,
+# often large, and the whole point of this project is that they stay local.
+/examples/*.blend
+/examples/saves/

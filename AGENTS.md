@@ -166,7 +166,7 @@ Do not optimize unfinished systems.
 
 **Phase 0 — Repo scaffold**
 - [x] 0.1 `git init`; create the directory tree in Section 5
-- [x] 0.2 `LICENSE` (8.1) · [x] 0.3 `pyproject.toml` (8.2) · [ ] 0.4 `.gitignore` (8.3)
+- [x] 0.2 `LICENSE` (8.1) · [x] 0.3 `pyproject.toml` (8.2) · [x] 0.4 `.gitignore` (8.3)
 - [ ] 0.5 `pip install -e ".[dev]"` succeeds with no errors
 
 **Phase 1 — `strata/` core (pure Python, zero `bpy` import at module scope —
@@ -277,6 +277,8 @@ implementation of the pipeline)**
 - 2026-08-02 — Codex — Added the exact MIT license text specified in Section 8.1.
 
 - 2026-08-02 — Codex — Added the root packaging and entry-point configuration from Section 8.2.
+
+- 2026-08-02 — Codex — Added the Section 8.3 ignore policy for build artifacts and local user data.
 
 ## 4. Architecture
 
