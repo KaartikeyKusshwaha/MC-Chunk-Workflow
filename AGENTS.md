@@ -239,7 +239,7 @@ inputs.
 Avoid hidden state whenever practical.
 
 **Phase 2 — Blender integration (driven by the pipeline; not the product)**
-- [ ] 2.1 `addon/__init__.py` (8.37) · [ ] 2.2 `addon/bridge_server.py` (8.38)
+- [x] 2.1 `addon/__init__.py` (8.37) · [ ] 2.2 `addon/bridge_server.py` (8.38)
 - [ ] 2.3 `addon/chunk_workflow/{__init__,panel,operators}.py` (8.39–8.41)
 - [ ] 2.4 `addon/world_import/{__init__,operators}.py` (8.42–8.43)
 - [ ] 2.5 `scripts/install_addon.py` (8.44) — one-command installer so "the
@@ -338,6 +338,8 @@ implementation of the pipeline)**
 - 2026-08-02 — Codex — Added the Anvil-reader and bridge-mocked Pipeline test suite from Sections 8.35–8.36; full execution is the next required gate.
 
 - 2026-08-02 — Codex — Ran `pytest tests/`: 5 passed; independently confirmed the Anvil reader returns the expected world-origin coordinate using its own writer API.
+
+- 2026-08-02 — Codex — Added the Strata Blender add-on registration entry point from Section 8.37; full add-on loading follows its declared module dependencies.
 
 ## 4. Architecture
 
