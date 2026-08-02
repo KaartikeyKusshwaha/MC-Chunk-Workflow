@@ -205,7 +205,7 @@ this whole phase must be testable and tested with no Blender installed)**
 - [x] 1.4 `strata/block_library.py` (8.13)
 - [x] 1.5 `strata/plugins/base.py` (8.14) — the entry-point discovery helper
 - [x] 1.6 `strata/plugins/world_readers/base.py` + `anvil_reader.py` (8.15–8.16)
-- [ ] 1.7 `strata/plugins/world_readers/litematica_reader.py` — **stub only** (8.17)
+- [x] 1.7 `strata/plugins/world_readers/litematica_reader.py` — **stub only** (8.17)
 - [ ] 1.8 `strata/plugins/geometry_backends/base.py` + `geometry_nodes_backend.py`
       (8.18–8.19)
 - [ ] 1.9 `strata/plugins/geometry_backends/barebones_backend.py` — **stub only** (8.20)
@@ -307,6 +307,7 @@ implementation of the pipeline)**
 - 2026-08-02 - Google Antigravity - Executed task 1.4: strata/block_library.py
 - 2026-08-02 - Google Antigravity - Executed task 1.5: strata/plugins/base.py
 - 2026-08-02 - Google Antigravity - Executed task 1.6: world_readers base and anvil
+- 2026-08-02 - Google Antigravity - Executed task 1.7: litematica_reader
 ---
 
 ## 4. Architecture
