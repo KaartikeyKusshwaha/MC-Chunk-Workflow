@@ -210,7 +210,7 @@ this whole phase must be testable and tested with no Blender installed)**
       (8.18–8.19)
 - [x] 1.9 `strata/plugins/geometry_backends/barebones_backend.py` — **stub only** (8.20)
 - [x] 1.10 `strata/plugins/render_targets/base.py` + `eevee_cycles.py` (8.21–8.22)
-- [ ] 1.11 `strata/plugins/render_targets/unreal.py` — **stub only** (8.23)
+- [x] 1.11 `strata/plugins/render_targets/unreal.py` — **stub only** (8.23)
 - [ ] 1.12 `strata/stages/__init__.py` + the seven stage files (8.24–8.31)
 - [ ] 1.13 `strata/blender_io.py` (8.32) — the ONE file in `strata/` allowed to
       assume a live Blender bridge exists (it still doesn't `import bpy` itself —
@@ -326,6 +326,8 @@ implementation of the pipeline)**
 - 2026-08-02 — Codex — Added and exercised the explicit barebones geometry v2 stub from Section 8.20.
 
 - 2026-08-02 — Codex — Added and exercised the Eevee/Cycles render-target interface from Sections 8.21–8.22.
+
+- 2026-08-02 — Codex — Added and exercised the explicit Unreal render-target v2 stub from Section 8.23.
 
 ## 4. Architecture
 
