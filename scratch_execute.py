@@ -51,70 +51,8 @@ def write_file(filepath):
     else:
         print(f"WARNING: Could not find code for {filepath} in AGENTS.md")
 
-# 0.5 Configure packaging
-execute_command("pip install -e .[dev]")
-commit_task("0.5", "Configure packaging")
-
-# Phase 1
-write_file("strata/__init__.py")
-write_file("strata/pipeline_state.py")
-commit_task("1.1", "strata core init and pipeline state")
-
-write_file("strata/chunking.py")
-commit_task("1.2", "strata/chunking.py")
-
-write_file("strata/culling.py")
-commit_task("1.3", "strata/culling.py")
-
-write_file("strata/block_library.py")
-commit_task("1.4", "strata/block_library.py")
-
-write_file("strata/plugins/base.py")
-commit_task("1.5", "strata/plugins/base.py")
-
-write_file("strata/plugins/world_readers/base.py")
-write_file("strata/plugins/world_readers/anvil_reader.py")
-commit_task("1.6", "world_readers base and anvil")
-
-write_file("strata/plugins/world_readers/litematica_reader.py")
-commit_task("1.7", "litematica_reader")
-
-write_file("strata/plugins/geometry_backends/base.py")
-write_file("strata/plugins/geometry_backends/geometry_nodes_backend.py")
-commit_task("1.8", "geometry_backends base and geometry_nodes")
-
-write_file("strata/plugins/geometry_backends/barebones_backend.py")
-commit_task("1.9", "barebones_backend")
-
-write_file("strata/plugins/render_targets/base.py")
-write_file("strata/plugins/render_targets/eevee_cycles.py")
-commit_task("1.10", "render_targets base and eevee_cycles")
-
-write_file("strata/plugins/render_targets/unreal.py")
-commit_task("1.11", "render_targets unreal")
-
-write_file("strata/stages/__init__.py")
-write_file("strata/stages/read_world.py")
-write_file("strata/stages/resolve_assets.py")
-write_file("strata/stages/optimize.py")
-write_file("strata/stages/chunk_manager.py")
-write_file("strata/stages/build_geometry.py")
-write_file("strata/stages/render_prep.py")
-write_file("strata/stages/animation_prep.py")
-commit_task("1.12", "strata stages")
-
-write_file("strata/blender_io.py")
-commit_task("1.13", "strata/blender_io.py")
-
-write_file("strata/pipeline.py")
-commit_task("1.14", "strata/pipeline.py")
-
-write_file("tests/test_world_reader.py")
-write_file("tests/test_pipeline.py")
-commit_task("1.15", "tests")
-
 # 1.16 Run tests
-execute_command("pytest tests/")
+execute_command(r"python -m pytest tests/ --basetemp=./.pytest_tmp")
 commit_task("1.16", "pytest")
 
 # Phase 2
