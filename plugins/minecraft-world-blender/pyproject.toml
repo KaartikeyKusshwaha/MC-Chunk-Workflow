@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "minecraft-world-blender"
+version = "0.1.0"
+description = "Codex MCP tools for Minecraft-to-Blender world workflows"
+requires-python = ">=3.11"
+dependencies = [
+  "anthropic>=0.104,<1",
+  "mcp[cli]>=1.27,<2",
+  "nbtlib>=2.0,<3",
+]
+
+[project.scripts]
+minecraft-world-blender = "minecraft_world_blender.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["minecraft_world_blender"]

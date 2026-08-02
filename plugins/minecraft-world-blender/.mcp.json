@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "minecraft-world-blender": {
+      "command": "uv",
+      "args": ["run", "--directory", ".", "minecraft-world-blender"],
+      "cwd": ".",
+      "env": {
+        "PYTHONUTF8": "1"
+      }
+    }
+  }
+}

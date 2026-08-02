@@ -1,0 +1,26 @@
+{
+  "name": "minecraft-world-blender",
+  "version": "0.1.0",
+  "description": "Generate and tailor Minecraft worlds in Blender through Codex tools.",
+  "author": {
+    "name": "KaartikeyKusshwaha",
+    "url": "https://github.com/KaartikeyKusshwaha"
+  },
+  "repository": "https://github.com/KaartikeyKusshwaha/Minecraft-World-Blender-Codex",
+  "license": "MIT",
+  "keywords": ["minecraft", "blender", "mcp", "world-generation"],
+  "interface": {
+    "displayName": "Minecraft World Blender",
+    "shortDescription": "Generate and tailor Minecraft worlds in Blender.",
+    "longDescription": "A Codex MCP toolset for inspecting Minecraft data, generating Blender worlds with user assets, and embedding scene-specific chunk controls.",
+    "developerName": "KaartikeyKusshwaha",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": [
+      "Inspect my Minecraft world data and Blender file.",
+      "Generate a Blender world using my asset mapping.",
+      "Embed custom chunk controls in this Blender world."
+    ]
+  },
+  "mcpServers": "./.mcp.json"
+}
