@@ -27,6 +27,9 @@ geometry_nodes = "strata.plugins.geometry_backends.geometry_nodes_backend:Geomet
 [project.entry-points."strata.plugins.render_targets"]
 eevee_cycles = "strata.plugins.render_targets.eevee_cycles:EeveeCyclesTarget"
 
+[tool.setuptools.packages.find]
+include = ["strata*"]
+
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"

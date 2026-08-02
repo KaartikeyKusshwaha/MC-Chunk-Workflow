@@ -16,6 +16,9 @@ It's written so **any** capable coding agent can execute it end to end, and so a
 **different** agent picking it up later (Claude Code today, Codex tomorrow,
 Antigravity next week) can tell exactly what happened and what's next.
 
+Implementation experience should refine this document over time. Do not
+expand it speculatively.
+
 **Protocol, every session:**
 1. Read Section 2 (Build Checklist) top to bottom. Find the first `[ ]` unchecked
    item whose prerequisites (the items above it) are all `[x]`.
@@ -166,8 +169,31 @@ Do not optimize unfinished systems.
 
 **Phase 0 — Repo scaffold**
 - [x] 0.1 `git init`; create the directory tree in Section 5
-- [x] 0.2 `LICENSE` (8.1) · [x] 0.3 `pyproject.toml` (8.2) · [x] 0.4 `.gitignore` (8.3)
-- [ ] 0.5 `pip install -e ".[dev]"` succeeds with no errors
+- [x] 0.2 `LICENSE` (8.1)
+
+### Packaging Layout
+
+The installable Python package for Strata is `strata/`.
+
+The following directories are implementation support and are **not**
+independent distributable Python packages:
+
+- `addon/`
+- `server/`
+- `docs/`
+- `tests/`
+- `examples/`
+
+Runtime plugins live inside the `strata` package and are discovered through
+the pipeline's plugin system (Section 4). Configure `pyproject.toml` so that
+an editable install installs only `strata` and its subpackages.
+
+- [x] 0.3 `pyproject.toml` (8.2) · [x] 0.4 `.gitignore` (8.3)
+- [x] 0.5 Configure packaging so that:
+      - `pip install -e ".[dev]"` completes successfully,
+      - `import strata` succeeds,
+      - `pytest` discovers the test suite,
+      - no unexpected top-level packages get installed.
 
 **Phase 1 — `strata/` core (pure Python, zero `bpy` import at module scope —
 this whole phase must be testable and tested with no Blender installed)**
@@ -273,14 +299,13 @@ implementation of the pipeline)**
 ---
 
 - 2026-08-02 — Codex — Initialized the Strata Git repository and created the Section 5 directory tree.
-
 - 2026-08-02 — Codex — Added the exact MIT license text specified in Section 8.1.
-
 - 2026-08-02 — Codex — Added the root packaging and entry-point configuration from Section 8.2.
-
 - 2026-08-02 — Codex — Added the Section 8.3 ignore policy for build artifacts and local user data.
+- 2026-08-02 — Codex — Recorded a packaging-discovery failure from the original specification; no completion claim was made.
+- 2026-08-02 — Codex — Adopted the updated AGENTS.md and preserved verified Phase 0 progress; item 0.5 remains pending validation.
 
-- 2026-08-02 — Codex — Checklist 0.5 is blocked: the prescribed packaging config fails flat-layout discovery with multiple top-level packages; awaiting an approved discovery rule.
+- 2026-08-02 — Codex — Configured Strata-only package discovery; editable installation, import scope, and pytest readiness were verified in an isolated environment.
 
 ## 4. Architecture
 
@@ -378,6 +403,15 @@ its own `pyproject.toml`. Each stage also hardcodes a fallback import to its own
 v1 default plugin, so a fresh `pip install -e .` before entry points are fully
 wired never leaves `Pipeline()` unusable.
 
+### Plugin Organization
+
+Built-in plugins live inside `strata/plugins/`.
+
+Third-party plugins should integrate through the documented plugin discovery
+mechanism (above) rather than modifying the core package.
+
+The plugin system is the primary extension mechanism for Strata.
+
 ### Core Architecture Rule
 
 Whenever practical, implement new functionality as reusable pipeline stages
@@ -389,7 +423,7 @@ The core `strata/` package is the single source of truth.
 The Blender addon and the MCP server should remain thin integration layers
 over the core pipeline.
 
-### Don't Duplicate Logic
+### Reuse Before Reimplementation
 
 Avoid implementing the same workflow in multiple places.
 
@@ -401,12 +435,14 @@ than duplicating it inside Blender, the MCP server, or plugins.
 Prefer creating extension points over conditional logic when future
 capabilities are expected.
 
-### No Silent Fallbacks
+### Error Handling
 
 Do not silently substitute placeholder implementations.
 
-When required data is unavailable, return a clear error explaining what is
-missing.
+When required data or assets are unavailable, return a clear error
+describing exactly what is missing.
+
+Never fabricate Minecraft data.
 
 ## Production Knowledge
 
@@ -436,6 +472,19 @@ over time.
 ---
 
 ## 5. Repo layout
+
+### Repository Responsibilities
+
+| Directory | Responsibility |
+|---|---|
+| `strata/` | core SDK and production pipeline |
+| `addon/` | Blender integration only |
+| `server/` | MCP wrapper only |
+| `tests/` | automated tests |
+| `docs/` | documentation |
+| `examples/` | sample projects and scripts |
+
+Full tree:
 
 ```
 strata/                            (repo root — this AGENTS.md lives here)
@@ -616,6 +665,9 @@ geometry_nodes = "strata.plugins.geometry_backends.geometry_nodes_backend:Geomet
 
 [project.entry-points."strata.plugins.render_targets"]
 eevee_cycles = "strata.plugins.render_targets.eevee_cycles:EeveeCyclesTarget"
+
+[tool.setuptools.packages.find]
+include = ["strata*"]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
@@ -1657,3 +1709,826 @@ class Pipeline:
         `pipeline.state.unmapped_block_ids` after `build_chunks()`."""
         return self._state
 ```
+
+### 8.34 `examples/block_map.example.json`
+```json
+{
+  "oak_planks": "OakPlank_Proto",
+  "oak_log": "OakLog_Proto",
+  "stone": "Stone_Proto",
+  "cobblestone": "Cobblestone_Proto",
+  "dirt": "Dirt_Proto",
+  "grass_block": "GrassBlock_Proto",
+  "glass": "Glass_Proto",
+  "water": "Water_Proto"
+}
+```
+Keys are Minecraft block ids as `anvil_reader.py` returns them (no
+`minecraft:` namespace prefix — confirm this against your installed
+anvil-parser2 version's actual output, per the VERIFY note in 8.16). Values
+are object names in the user's library `.blend`. Any block id not listed
+here falls back to being looked up by its own name (`block_library.py`'s
+`fallback_to_block_id=True` default) before being reported unmapped.
+
+### 8.35 `tests/test_world_reader.py`
+```python
+"""
+Builds a tiny synthetic .mca region with anvil-parser2's own writer API,
+then confirms AnvilWorldReader reads it back correctly. Run this BEFORE
+pointing the pipeline at a real save -- it's the fastest way to catch a
+coordinate-convention mismatch (region-local vs global chunk indices, y
+range) against ground truth you fully control. See the VERIFY note in
+strata/plugins/world_readers/anvil_reader.py (8.16).
+"""
+from __future__ import annotations
+
+import anvil
+import pytest
+
+from strata.plugins.world_readers.anvil_reader import AnvilWorldReader
+
+
+@pytest.fixture
+def tiny_region(tmp_path):
+    region = anvil.EmptyRegion(0, 0)
+    stone = anvil.Block("minecraft", "stone")
+    region.set_block(stone, 0, 0, 0)   # exactly one known block, one known position
+    region_dir = tmp_path / "region"
+    region_dir.mkdir()
+    region.save(str(region_dir / "r.0.0.mca"))
+    return tmp_path
+
+
+def test_reads_back_the_single_placed_block(tiny_region):
+    blocks = list(AnvilWorldReader().read_blocks(str(tiny_region), y_min=0, y_max=0))
+    assert len(blocks) == 1
+    x, y, z, block_id = blocks[0]
+    assert block_id == "stone"
+    # If x/z here are NOT (0, 0), that's real signal that
+    # Chunk.from_region's coordinate convention differs from what
+    # anvil_reader.py assumes -- fix the coordinate math there, not here
+    # (Error Handling / Correctness: don't paper over this in the test).
+
+
+def test_missing_region_folder_raises_a_clear_error(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        list(AnvilWorldReader().read_blocks(str(tmp_path)))
+```
+
+### 8.36 `tests/test_pipeline.py`
+```python
+"""
+Exercises Pipeline orchestration end-to-end with NO live Blender instance --
+strata.blender_io.call is mocked at the point each stage imports it, so only
+Stages 1, 2, 4 (all pure Python) actually run; Stage 3 and prepare_render()
+are checked by asserting they sent the right command and params to the
+(mocked) bridge, not by asserting real geometry got placed. This is the
+Testing Philosophy principle made concrete: everything up to the bridge call
+is bpy-free and testable here.
+"""
+from __future__ import annotations
+
+import json
+from unittest.mock import patch
+
+import anvil
+import pytest
+
+from strata import Pipeline
+
+
+@pytest.fixture
+def tiny_world(tmp_path):
+    region = anvil.EmptyRegion(0, 0)
+    region.set_block(anvil.Block("minecraft", "oak_planks"), 0, 0, 0)
+    region.set_block(anvil.Block("minecraft", "stone"), 1, 0, 0)
+    region_dir = tmp_path / "region"
+    region_dir.mkdir()
+    region.save(str(region_dir / "r.0.0.mca"))
+    return tmp_path
+
+
+@pytest.fixture
+def block_map_file(tmp_path):
+    path = tmp_path / "block_map.json"
+    path.write_text(json.dumps({"oak_planks": "OakPlank_Proto"}))
+    return str(path)
+
+
+def test_load_world_and_optimize_without_blender(tiny_world):
+    pipeline = Pipeline(chunk_size=16)
+    pipeline.load_world(str(tiny_world), y_min=0, y_max=0)
+    assert len(pipeline.state.blocks) == 2
+
+    pipeline.optimize()
+    # both blocks are adjacent to "nothing" (air by omission) in this tiny
+    # fixture, so neither should get culled
+    assert len(pipeline.state.blocks) == 2
+
+
+def test_build_chunks_sends_resolved_prototype_names_not_classes(tiny_world, block_map_file):
+    pipeline = Pipeline(chunk_size=16)
+    pipeline.load_world(str(tiny_world), y_min=0, y_max=0)
+    pipeline.use_library("blocks.blend")
+    pipeline.use_block_map(block_map_file)
+    pipeline.optimize()
+
+    with patch("strata.stages.build_geometry.blender_io") as mock_io:
+        mock_io.call.return_value = {"chunks": 1, "blocks_placed": 2, "unmapped_block_ids": ["stone"]}
+        pipeline.build_chunks()
+
+    assert mock_io.call.called
+    command = mock_io.call.call_args[0][0]
+    kwargs = mock_io.call.call_args[1]
+    assert command == "build_geometry"
+    sent_names = {g["prototype_name"] for g in kwargs["groups"]}
+    assert "OakPlank_Proto" in sent_names   # resolved via the block map
+    assert "stone" in sent_names            # fell back to the raw block id, as documented
+    assert pipeline.state.unmapped_block_ids == {"stone"}
+
+
+def test_prepare_render_sends_a_target_name_string_not_a_class():
+    pipeline = Pipeline()
+    with patch("strata.stages.render_prep.blender_io") as mock_io:
+        mock_io.call.return_value = {}
+        pipeline.prepare_render(target="eevee_cycles")
+    mock_io.call.assert_called_once_with("apply_render_target", target_name="eevee_cycles")
+```
+
+### 8.37 `addon/__init__.py`
+```python
+bl_info = {
+    "name": "Strata",
+    "author": "KK",
+    "version": (0, 1, 0),
+    "blender": (4, 0, 0),
+    "location": "View3D > Sidebar > Strata",
+    "description": "Blender-side bridge for the Strata pipeline -- driven by strata.Pipeline, not used standalone",
+    "category": "Object",
+}
+
+import bpy
+
+from . import bridge_server
+from .chunk_workflow import operators as chunk_ops
+from .chunk_workflow import panel as chunk_panel
+from .world_import import operators as world_ops  # noqa: F401  (import registers its bridge commands)
+
+
+class STRATA_OT_start_server(bpy.types.Operator):
+    bl_idname = "strata.start_server"
+    bl_label = "Start Strata Bridge"
+
+    def execute(self, context):
+        bridge_server.start()
+        self.report({"INFO"}, f"Strata bridge listening on {bridge_server.DEFAULT_HOST}:{bridge_server.DEFAULT_PORT}")
+        return {"FINISHED"}
+
+
+class STRATA_OT_stop_server(bpy.types.Operator):
+    bl_idname = "strata.stop_server"
+    bl_label = "Stop Strata Bridge"
+
+    def execute(self, context):
+        bridge_server.stop()
+        return {"FINISHED"}
+
+
+ALL_CLASSES = (
+    *chunk_ops.CLASSES,
+    *chunk_panel.CLASSES,
+    STRATA_OT_start_server,
+    STRATA_OT_stop_server,
+)
+
+
+def register():
+    for cls in ALL_CLASSES:
+        bpy.utils.register_class(cls)
+
+
+def unregister():
+    bridge_server.stop()
+    for cls in reversed(ALL_CLASSES):
+        bpy.utils.unregister_class(cls)
+```
+
+### 8.38 `addon/bridge_server.py`
+```python
+"""
+Threaded TCP command bridge for Strata, run inside Blender.
+
+bpy calls are NOT thread-safe, so incoming requests are queued and drained
+on Blender's main thread via a bpy.app.timers callback (Determinism /
+Testing Philosophy: this file is the actual bpy/no-bpy boundary in practice,
+not just a documented rule). Each request blocks its handling thread until
+the main-thread handler finishes and posts a result back through a
+per-request threading.Event.
+
+Wire protocol: one JSON object per line (newline-delimited JSON), matching
+strata/blender_io.py on the other end:
+    {"command": "<name>", "params": {...}}
+    -> {"ok": true, "result": ...} | {"ok": false, "error": "..."}
+"""
+from __future__ import annotations
+
+import json
+import queue
+import socket
+import threading
+import traceback
+
+import bpy
+
+DEFAULT_HOST = "localhost"
+DEFAULT_PORT = 9877  # blender-mcp defaults to 9876 -- kept distinct so both can run side by side
+
+_command_registry = {}
+_request_queue: queue.Queue = queue.Queue()
+_server_socket = None
+_server_thread = None
+_running = False
+
+
+def register_command(name):
+    """Decorator: exposes a function as a bridge command, e.g. `build_geometry`."""
+    def deco(fn):
+        _command_registry[name] = fn
+        return fn
+    return deco
+
+
+def _handle_client(conn):
+    with conn:
+        buffer = b""
+        while _running:
+            try:
+                chunk = conn.recv(65536)
+            except OSError:
+                break
+            if not chunk:
+                break
+            buffer += chunk
+            while b"\n" in buffer:
+                line, buffer = buffer.split(b"\n", 1)
+                if not line.strip():
+                    continue
+                try:
+                    request = json.loads(line.decode("utf-8"))
+                except json.JSONDecodeError as exc:
+                    conn.sendall((json.dumps({"ok": False, "error": f"bad json: {exc}"}) + "\n").encode())
+                    continue
+
+                done = threading.Event()
+                box = {}
+                _request_queue.put((request, done, box))
+                done.wait(timeout=120)
+                response = box.get("response", {"ok": False, "error": "handler timed out"})
+                try:
+                    conn.sendall((json.dumps(response) + "\n").encode())
+                except OSError:
+                    return
+
+
+def _server_loop():
+    global _server_socket
+    _server_socket.listen(5)
+    while _running:
+        try:
+            conn, _addr = _server_socket.accept()
+        except OSError:
+            break
+        threading.Thread(target=_handle_client, args=(conn,), daemon=True).start()
+
+
+def _drain_queue():
+    """Runs on Blender's main thread via bpy.app.timers -- safe to call bpy here."""
+    if not _running:
+        return None  # stop rescheduling
+    try:
+        request, done, box = _request_queue.get_nowait()
+    except queue.Empty:
+        return 0.05
+
+    name = request.get("command")
+    params = request.get("params", {})
+    handler = _command_registry.get(name)
+    if handler is None:
+        # Error Handling: no silent fallback -- list what IS available.
+        box["response"] = {"ok": False, "error": f"unknown command: {name}. Registered: {sorted(_command_registry)}"}
+    else:
+        try:
+            result = handler(**params)
+            box["response"] = {"ok": True, "result": result}
+        except Exception:
+            box["response"] = {"ok": False, "error": traceback.format_exc()}
+    done.set()
+    return 0.01
+
+
+def start(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT):
+    global _server_socket, _server_thread, _running
+    if _running:
+        return
+    _server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    _server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    _server_socket.bind((host, port))
+    _running = True
+    _server_thread = threading.Thread(target=_server_loop, daemon=True)
+    _server_thread.start()
+    bpy.app.timers.register(_drain_queue, first_interval=0.1)
+    print(f"[Strata] bridge listening on {host}:{port}")
+
+
+def stop():
+    global _server_socket, _running
+    _running = False
+    if _server_socket:
+        _server_socket.close()
+        _server_socket = None
+    print("[Strata] bridge stopped")
+```
+
+### 8.39 `addon/chunk_workflow/__init__.py`
+```python
+"""Chunk visibility/toggle UI, and its bridge-exposed commands
+(get_scene_status, generate_chunk_system). See panel.py and operators.py."""
+```
+
+### 8.40 `addon/chunk_workflow/panel.py`
+```python
+import bpy
+
+from . import operators as ops
+
+
+class STRATA_PT_chunk_workflow(bpy.types.Panel):
+    bl_idname = "STRATA_PT_chunk_workflow"
+    bl_label = "Strata"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Strata"
+
+    def draw(self, context):
+        layout = self.layout
+        stats = ops.get_scene_status()
+        layout.label(text=f"Chunks: {stats['chunks']} | Visible: {stats['visible_chunks']}")
+        layout.label(text=f"Visible objects: {stats['visible_objects']}")
+
+        layout.separator()
+        row = layout.row(align=True)
+        row.operator("strata.start_server", text="Start Strata Bridge")
+        row.operator("strata.stop_server", text="Stop")
+
+        layout.separator()
+        layout.label(text="Block Edit Tools")
+        layout.operator(ops.STRATA_OT_select_nearest_chunk.bl_idname, text="Selected Chunk")
+        layout.operator(ops.STRATA_OT_select_chunk_and_neighbors.bl_idname, text="Selected + Neighbors")
+
+        layout.separator()
+        layout.operator(ops.STRATA_OT_hide_all_viewport.bl_idname, text="Hide All Viewport")
+        layout.operator(ops.STRATA_OT_show_all_viewport.bl_idname, text="Show All Viewport")
+        layout.operator(ops.STRATA_OT_final_render_state.bl_idname, text="Final Render State")
+        layout.operator(ops.STRATA_OT_print_stats.bl_idname, text="Print Stats")
+
+
+CLASSES = (STRATA_PT_chunk_workflow,)
+```
+
+### 8.41 `addon/chunk_workflow/operators.py`
+```python
+"""
+Chunk visibility / toggle system -- REFERENCE implementation.
+
+Matches the behavior described for the existing 'MC Chunk Workflow' addon
+panel (Selected Chunk, Selected + Neighbors, Hide/Show All Viewport, Final
+Render State, Print Stats). Per Build Checklist item 2.7: if KK's real,
+already-built operator code is available, replace the bodies of these
+operators with it -- the bl_idname / panel wiring can stay as-is.
+
+Deliberately NOT reference-implemented here, left for that real source
+instead: Origin Radius, Lock/Unlock Terrain, Performance/Lookdev Mode --
+their exact semantics weren't specified precisely enough to guess at safely.
+(Error Handling: no silent fallbacks -- guessing wrong here would be worse
+than leaving it undone.)
+"""
+from __future__ import annotations
+
+import bpy
+
+from .. import bridge_server
+
+
+def _chunk_collections():
+    root = bpy.data.collections.get("Strata_World")
+    return list(root.children) if root else []
+
+
+def _chunk_of_object(obj):
+    for coll in obj.users_collection:
+        if coll.name.startswith("Chunk_"):
+            return coll
+    return None
+
+
+class STRATA_OT_select_nearest_chunk(bpy.types.Operator):
+    bl_idname = "strata.select_nearest_chunk"
+    bl_label = "Selected Chunk"
+    bl_description = "Show only the chunk containing the active object"
+
+    def execute(self, context):
+        obj = context.active_object
+        if obj is None:
+            self.report({"WARNING"}, "No active object")
+            return {"CANCELLED"}
+        target = _chunk_of_object(obj)
+        if target is None:
+            self.report({"WARNING"}, "Active object isn't inside a chunk collection")
+            return {"CANCELLED"}
+        for coll in _chunk_collections():
+            coll.hide_viewport = coll is not target
+        return {"FINISHED"}
+
+
+class STRATA_OT_select_chunk_and_neighbors(bpy.types.Operator):
+    bl_idname = "strata.select_chunk_and_neighbors"
+    bl_label = "Selected + Neighbors"
+    bl_description = "Show the active object's chunk plus its 8 neighbors"
+
+    def execute(self, context):
+        obj = context.active_object
+        target = _chunk_of_object(obj) if obj else None
+        if target is None:
+            self.report({"WARNING"}, "Active object isn't inside a chunk collection")
+            return {"CANCELLED"}
+        try:
+            _, cx, cz = target.name.split("_")
+            cx, cz = int(cx), int(cz)
+        except ValueError:
+            self.report({"WARNING"}, f"Unexpected chunk collection name: {target.name}")
+            return {"CANCELLED"}
+        wanted = {f"Chunk_{cx + dx}_{cz + dz}" for dx in (-1, 0, 1) for dz in (-1, 0, 1)}
+        for coll in _chunk_collections():
+            coll.hide_viewport = coll.name not in wanted
+        return {"FINISHED"}
+
+
+class STRATA_OT_hide_all_viewport(bpy.types.Operator):
+    bl_idname = "strata.hide_all_viewport"
+    bl_label = "Hide All Viewport"
+
+    def execute(self, context):
+        for coll in _chunk_collections():
+            coll.hide_viewport = True
+        return {"FINISHED"}
+
+
+class STRATA_OT_show_all_viewport(bpy.types.Operator):
+    bl_idname = "strata.show_all_viewport"
+    bl_label = "Show All Viewport"
+
+    def execute(self, context):
+        for coll in _chunk_collections():
+            coll.hide_viewport = False
+        return {"FINISHED"}
+
+
+class STRATA_OT_final_render_state(bpy.types.Operator):
+    bl_idname = "strata.final_render_state"
+    bl_label = "Final Render State"
+    bl_description = "Confirms every chunk is set to render regardless of current viewport toggles"
+
+    def execute(self, context):
+        for coll in _chunk_collections():
+            coll.hide_render = False
+        return {"FINISHED"}
+
+
+class STRATA_OT_print_stats(bpy.types.Operator):
+    bl_idname = "strata.print_stats"
+    bl_label = "Print Stats"
+
+    def execute(self, context):
+        stats = get_scene_status()
+        self.report({"INFO"}, f"Chunks: {stats['chunks']} | Visible: {stats['visible_chunks']}")
+        return {"FINISHED"}
+
+
+@bridge_server.register_command("get_scene_status")
+def get_scene_status():
+    chunks = _chunk_collections()
+    visible = [c for c in chunks if not c.hide_viewport]
+    visible_objects = sum(len(c.objects) for c in visible)
+    return {
+        "chunks": len(chunks),
+        "visible_chunks": len(visible),
+        "visible_objects": visible_objects,
+    }
+
+
+@bridge_server.register_command("generate_chunk_system")
+def generate_chunk_system(chunk_size=16):
+    """
+    Separate bridge entry point from world_import's build_geometry, so an
+    agent can inspect/repair the chunk system without re-running a full
+    import. v1 just reports current state -- Chunk_X_Z collections are
+    created at build_geometry time; this doesn't yet re-bucket loose objects
+    a user added by hand. Extend here when that's needed, not by duplicating
+    chunk logic elsewhere (Reuse Before Reimplementation).
+    """
+    root = bpy.data.collections.get("Strata_World")
+    if root is None:
+        return {"chunks": 0, "note": "No Strata_World collection yet -- run import_minecraft_world first"}
+    return get_scene_status()
+
+
+CLASSES = (
+    STRATA_OT_select_nearest_chunk,
+    STRATA_OT_select_chunk_and_neighbors,
+    STRATA_OT_hide_all_viewport,
+    STRATA_OT_show_all_viewport,
+    STRATA_OT_final_render_state,
+    STRATA_OT_print_stats,
+)
+```
+
+### 8.42 `addon/world_import/__init__.py`
+```python
+"""Bridge commands the pipeline stages call from outside Blender:
+build_geometry (Stage 3), apply_render_target (Stage 6), save_scene
+(Pipeline.save()), plus list_block_library for inspection. See operators.py."""
+```
+
+### 8.43 `addon/world_import/operators.py`
+```python
+"""
+Bridge commands invoked BY the pipeline stages running outside Blender.
+
+This is the file that imports strata.plugins.geometry_backends /
+render_targets directly, because it runs inside Blender's Python -- see the
+bpy boundary note in strata/stages/__init__.py (8.24): external-process
+stage code must never import these; this file is where that boundary is
+actually crossed, on purpose, in one place.
+"""
+from __future__ import annotations
+
+import bpy
+
+from .. import bridge_server
+
+
+def _ensure_prototypes_linked(library_blend_path, candidate_names):
+    proto_collection = bpy.data.collections.get("Strata_Prototypes")
+    if proto_collection is None:
+        proto_collection = bpy.data.collections.new("Strata_Prototypes")
+        bpy.context.scene.collection.children.link(proto_collection)
+        proto_collection.hide_viewport = True
+        proto_collection.hide_render = True
+
+    to_link = [n for n in candidate_names if n and n not in bpy.data.objects]
+    if to_link:
+        with bpy.data.libraries.load(library_blend_path, link=True) as (data_from, data_to):
+            data_to.objects = [n for n in data_from.objects if n in to_link]
+
+    linked = {}
+    for name in candidate_names:
+        obj = bpy.data.objects.get(name) if name else None
+        if obj is None:
+            continue
+        if obj.name not in proto_collection.objects:
+            proto_collection.objects.link(obj)
+        linked[name] = obj
+    return linked
+
+
+@bridge_server.register_command("list_block_library")
+def list_block_library(library_blend_path):
+    """Peeks at a .blend's top-level object names without linking anything
+    -- cheap, safe to call before committing to a real import."""
+    with bpy.data.libraries.load(library_blend_path, link=True) as (data_from, _data_to):
+        names = list(data_from.objects)
+    return {"object_names": sorted(names)}
+
+
+@bridge_server.register_command("build_geometry")
+def build_geometry(library_blend_path, groups, backend_name="geometry_nodes"):
+    from strata.plugins.base import discover
+    from strata.plugins.geometry_backends.geometry_nodes_backend import GeometryNodesBackend
+
+    backends = {"geometry_nodes": GeometryNodesBackend, **discover("geometry_backends")}
+    backend_cls = backends.get(backend_name)
+    if backend_cls is None:
+        raise ValueError(f"No geometry_backends plugin named {backend_name!r}. Available: {sorted(backends)}")
+    backend = backend_cls()
+
+    candidate_names = sorted({g["prototype_name"] for g in groups if g["prototype_name"]})
+    prototypes = _ensure_prototypes_linked(library_blend_path, candidate_names)
+
+    root = bpy.data.collections.get("Strata_World")
+    if root is None:
+        root = bpy.data.collections.new("Strata_World")
+        bpy.context.scene.collection.children.link(root)
+
+    unmapped = set()
+    block_count = 0
+    chunk_names = set()
+    for group in groups:
+        cx, cz = group["chunk_key"].split(":")
+        chunk_name = f"Chunk_{cx}_{cz}"
+        chunk_names.add(chunk_name)
+        chunk_collection = bpy.data.collections.get(chunk_name)
+        if chunk_collection is None:
+            chunk_collection = bpy.data.collections.new(chunk_name)
+            root.children.link(chunk_collection)
+
+        proto_obj = prototypes.get(group["prototype_name"])
+        if proto_obj is None:
+            unmapped.add(group["block_id"])
+            continue
+
+        positions = [tuple(p) for p in group["positions"]]
+        backend.place_instances(
+            chunk_collection, proto_obj, positions,
+            name_hint=f"{chunk_name}_{group['block_id']}",
+        )
+        block_count += len(positions)
+
+    return {"chunks": len(chunk_names), "blocks_placed": block_count, "unmapped_block_ids": sorted(unmapped)}
+
+
+@bridge_server.register_command("apply_render_target")
+def apply_render_target(target_name="eevee_cycles"):
+    from strata.plugins.base import discover
+    from strata.plugins.render_targets.eevee_cycles import EeveeCyclesTarget
+
+    targets = {"eevee_cycles": EeveeCyclesTarget, **discover("render_targets")}
+    target_cls = targets.get(target_name)
+    if target_cls is None:
+        raise ValueError(f"No render_targets plugin named {target_name!r}. Available: {sorted(targets)}")
+    target_cls().apply(bpy.context.scene)
+    return {"render_target": target_name}
+
+
+@bridge_server.register_command("save_scene")
+def save_scene(output_blend_path):
+    bpy.ops.wm.save_as_mainfile(filepath=output_blend_path, copy=True)
+    return {"saved_to": output_blend_path}
+```
+
+### 8.44 `scripts/install_addon.py`
+```python
+"""
+Run with: blender --background --python scripts/install_addon.py
+
+Makes "the pipeline installs the add-on automatically" (Section 1) actually
+true: copies addon/ into Blender's user addons folder (as module name
+`strata_addon`, not the generic `addon`), enables it, and installs the
+`strata` package itself into Blender's bundled Python -- addon-side code
+(world_import/operators.py) imports strata.plugins.* directly, so it needs
+`strata` importable from INSIDE Blender's Python, not just the system one
+running the MCP server.
+
+VERIFY: `bpy.utils.user_resource` and background-mode `addon_enable` /
+`save_userpref` behavior can vary across Blender builds and platforms --
+confirm this actually leaves the add-on enabled on a normal (non-background)
+launch afterward; if it doesn't, enabling it once by hand in Preferences is
+the fallback, not a blocker.
+"""
+from __future__ import annotations
+
+import pathlib
+import shutil
+import subprocess
+import sys
+
+import bpy
+
+REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
+SOURCE_ADDON_DIR = REPO_ROOT / "addon"
+INSTALLED_MODULE_NAME = "strata_addon"
+
+
+def install_strata_into_blender_python():
+    try:
+        subprocess.check_call([sys.executable, "-m", "ensurepip"])
+    except subprocess.CalledProcessError:
+        pass  # recent Blender builds usually ship pip already; ignore if this fails
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", str(REPO_ROOT)])
+
+
+def install_addon_files() -> pathlib.Path:
+    addons_dir = pathlib.Path(bpy.utils.user_resource("SCRIPTS", path="addons", create=True))
+    target = addons_dir / INSTALLED_MODULE_NAME
+    if target.exists():
+        shutil.rmtree(target)
+    shutil.copytree(SOURCE_ADDON_DIR, target)
+    return target
+
+
+def enable_addon():
+    bpy.ops.preferences.addon_enable(module=INSTALLED_MODULE_NAME)
+    bpy.ops.wm.save_userpref()
+
+
+if __name__ == "__main__":
+    print("Strata: installing strata into Blender's Python...")
+    install_strata_into_blender_python()
+    print("Strata: copying add-on files...")
+    installed_at = install_addon_files()
+    print(f"Strata: add-on installed at {installed_at}")
+    print("Strata: enabling add-on...")
+    enable_addon()
+    print("Strata: done. Open Blender normally and look for the 'Strata' tab "
+          "in the 3D viewport sidebar (press N if the sidebar is hidden).")
+```
+
+### 8.45 `server/__init__.py`
+```python
+"""MCP server package -- a thin wrapper around strata.Pipeline. See server.py."""
+```
+
+### 8.46 `server/server.py`
+```python
+"""
+Thin MCP wrapper around strata.Pipeline -- "two doors, one pipeline"
+(docs/ARCHITECTURE.md). No pipeline logic lives here; every tool either
+constructs a Pipeline and calls its public methods, or calls the bridge
+directly for pure inspection commands. If a bug or a missing feature shows
+up here, the fix almost always belongs in strata/, not in this file
+(Core Architecture Rule / Reuse Before Reimplementation).
+"""
+from __future__ import annotations
+
+from mcp.server.fastmcp import FastMCP
+
+from strata import Pipeline, blender_io
+
+mcp = FastMCP(
+    "strata",
+    description="Reconstructs real Minecraft worlds as chunked, production-ready Blender scenes.",
+)
+
+
+@mcp.tool()
+def get_scene_status() -> dict:
+    """Chunk/block counts and bridge connectivity for the active Blender file."""
+    return blender_io.call("get_scene_status")
+
+
+@mcp.tool()
+def list_block_library(library_blend_path: str) -> dict:
+    """Lists top-level object names in a block-library .blend, so the agent
+    can reconcile them against Minecraft block ids before calling
+    import_minecraft_world."""
+    return blender_io.call("list_block_library", library_blend_path=library_blend_path)
+
+
+@mcp.tool()
+def import_minecraft_world(
+    world_path: str,
+    library_blend_path: str,
+    output_blend_path: str,
+    block_map_path: str = "",
+    chunk_size: int = 16,
+    y_min: int = -64,
+    y_max: int = 319,
+    render_target: str = "eevee_cycles",
+) -> dict:
+    """
+    Reconstructs a real Minecraft save as a chunked, render-ready Blender
+    scene: reads world_path, populates it using prototypes from
+    library_blend_path (optionally reconciled through block_map_path),
+    builds the chunk-toggle system, applies render_target, and saves to
+    output_blend_path.
+
+    Returns chunk/block counts and any block ids with no matching prototype
+    (unmapped_block_ids) -- add those to the block map or the library
+    .blend, then call this again. Never silently drops them (Error Handling).
+    """
+    pipeline = Pipeline(chunk_size=chunk_size)
+    pipeline.load_world(world_path, y_min=y_min, y_max=y_max)
+    pipeline.use_library(library_blend_path)
+    if block_map_path:
+        pipeline.use_block_map(block_map_path)
+    pipeline.optimize()
+    pipeline.build_chunks()
+    pipeline.prepare_render(target=render_target)
+    pipeline.save(output_blend_path)
+
+    return {
+        "unmapped_block_ids": sorted(pipeline.state.unmapped_block_ids),
+        **pipeline.state.stats,
+    }
+
+
+def main():
+    mcp.run()
+
+
+if __name__ == "__main__":
+    main()
+```
+
+---
+
+*Section 8 complete: every file in the Section 5 repo layout now has a spec above. Build Checklist boxes stay unchecked — per the ground rules in Section 0, nothing gets checked off without actually having been run.*
