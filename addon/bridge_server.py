@@ -74,11 +74,12 @@ def _handle_client(conn):
 
 
 def _server_loop():
-    global _server_socket
-    _server_socket.listen(5)
+    server_socket = _server_socket
+    if server_socket is None:
+        return
     while _running:
         try:
-            conn, _addr = _server_socket.accept()
+            conn, _addr = server_socket.accept()
         except OSError:
             break
         threading.Thread(target=_handle_client, args=(conn,), daemon=True).start()
@@ -116,6 +117,7 @@ def start(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT):
     _server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     _server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     _server_socket.bind((host, port))
+    _server_socket.listen(5)
     _running = True
     _server_thread = threading.Thread(target=_server_loop, daemon=True)
     _server_thread.start()

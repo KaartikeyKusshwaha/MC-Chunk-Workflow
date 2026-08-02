@@ -247,7 +247,7 @@ Avoid hidden state whenever practical.
       --background --python scripts/install_addon.py` copies `addon/` into
       Blender's addons folder and enables it. Not literally invisible (Blender has
       to already be installed, obviously), but one command, not a manual GUI walk.
-- [ ] 2.6 Install via 2.5 against a real Blender (4.0+), confirm the sidebar panel
+- [x] 2.6 Install via 2.5 against a real Blender (4.0+), confirm the sidebar panel
       appears under a "Strata" tab, confirm "Start Strata Bridge" runs clean
 - [ ] 2.7 **If KK's real chunk-workflow operator code is available, replace the
       reference implementation in 8.41 with it now**, before going further
@@ -350,6 +350,8 @@ implementation of the pipeline)**
 - 2026-08-02 — Codex — Added the one-command Blender add-on installer from Section 8.44; its real installation behavior is verified at item 2.6.
 
 - 2026-08-02 — Codex — Checklist 2.6 is blocked: the specified bridge has a start/stop race in which its server thread can dereference the cleared global socket during immediate shutdown; add-on installation itself succeeded.
+
+- 2026-08-02 — Codex — Corrected and verified the bridge shutdown race; Strata was installed in Blender 4.5, its sidebar panel loaded, and three immediate bridge start/stop cycles completed cleanly.
 
 ## 4. Architecture
 
@@ -2035,11 +2037,12 @@ def _handle_client(conn):
 
 
 def _server_loop():
-    global _server_socket
-    _server_socket.listen(5)
+    server_socket = _server_socket
+    if server_socket is None:
+        return
     while _running:
         try:
-            conn, _addr = _server_socket.accept()
+            conn, _addr = server_socket.accept()
         except OSError:
             break
         threading.Thread(target=_handle_client, args=(conn,), daemon=True).start()
@@ -2077,6 +2080,7 @@ def start(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT):
     _server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     _server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     _server_socket.bind((host, port))
+    _server_socket.listen(5)
     _running = True
     _server_thread = threading.Thread(target=_server_loop, daemon=True)
     _server_thread.start()
