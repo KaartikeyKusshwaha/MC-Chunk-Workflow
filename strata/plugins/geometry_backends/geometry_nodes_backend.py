@@ -16,15 +16,17 @@ This file is the only place in the repo that assumption lives.
 """
 from __future__ import annotations
 
-from typing import List, Tuple
-
-import bpy
+from typing import TYPE_CHECKING, List, Tuple
 
 from .base import GeometryBackend
+
+if TYPE_CHECKING:
+    import bpy as _bpy
 
 
 class GeometryNodesBackend(GeometryBackend):
     def place_instances(self, chunk_collection, prototype_obj, positions: List[Tuple[int, int, int]], name_hint: str) -> None:
+        import bpy  # only available inside Blender at runtime
         mesh = bpy.data.meshes.new(f"{name_hint}_pts")
         mesh.from_pydata(positions, [], [])
         mesh.update()
@@ -35,6 +37,7 @@ class GeometryNodesBackend(GeometryBackend):
         modifier.node_group = self._instancer_node_group(prototype_obj)
 
     def _instancer_node_group(self, prototype_obj):
+        import bpy  # only available inside Blender at runtime
         group_name = f"Strata_Instancer_{prototype_obj.name}"
         existing = bpy.data.node_groups.get(group_name)
         if existing:
@@ -62,3 +65,4 @@ class GeometryNodesBackend(GeometryBackend):
         links.new(inst.outputs["Instances"], realize.inputs["Geometry"])
         links.new(realize.outputs["Geometry"], n_out.inputs["Geometry"])
         return ng
+

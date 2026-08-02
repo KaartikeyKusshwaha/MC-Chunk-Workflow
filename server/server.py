@@ -12,10 +12,7 @@ from mcp.server.fastmcp import FastMCP
 
 from strata import Pipeline, blender_io
 
-mcp = FastMCP(
-    "strata",
-    description="Reconstructs real Minecraft worlds as chunked, production-ready Blender scenes.",
-)
+mcp = FastMCP("strata")
 
 
 @mcp.tool()
