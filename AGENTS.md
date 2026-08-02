@@ -217,7 +217,7 @@ this whole phase must be testable and tested with no Blender installed)**
       it's a socket client, see Section 4)
 - [x] 1.14 `strata/pipeline.py` (8.33) — wire it all together as the `Pipeline` class
 - [x] 1.15 `tests/test_world_reader.py` (8.35), `tests/test_pipeline.py` (8.36)
-- [ ] 1.16 Run `pytest tests/` — **must pass before Phase 2.** `test_world_reader`
+- [x] 1.16 Run `pytest tests/` — **must pass before Phase 2.** `test_world_reader`
       is the empirical check on the coordinate-convention uncertainty flagged
       inside 8.15 — do not skip it, do not check it off without running it.
 
@@ -336,6 +336,8 @@ implementation of the pipeline)**
 - 2026-08-02 — Codex — Added and exercised the Blender-free public Pipeline orchestration API from Section 8.33.
 
 - 2026-08-02 — Codex — Added the Anvil-reader and bridge-mocked Pipeline test suite from Sections 8.35–8.36; full execution is the next required gate.
+
+- 2026-08-02 — Codex — Ran `pytest tests/`: 5 passed; independently confirmed the Anvil reader returns the expected world-origin coordinate using its own writer API.
 
 ## 4. Architecture
 
