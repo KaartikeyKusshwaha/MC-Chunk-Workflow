@@ -349,6 +349,8 @@ implementation of the pipeline)**
 
 - 2026-08-02 — Codex — Added the one-command Blender add-on installer from Section 8.44; its real installation behavior is verified at item 2.6.
 
+- 2026-08-02 — Codex — Checklist 2.6 is blocked: the specified bridge has a start/stop race in which its server thread can dereference the cleared global socket during immediate shutdown; add-on installation itself succeeded.
+
 ## 4. Architecture
 
 ```mermaid
