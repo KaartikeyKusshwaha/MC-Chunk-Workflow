@@ -21,69 +21,40 @@ graph LR
 
 ---
 
-## Showcase
+## Current Capabilities
 
-### Large World Import
-![Large World Import](docs/images/landscape_wide.png)
-Strata gracefully handles entire world regions by smartly chunking data for unparalleled viewport performance. You can load massive landscapes spanning thousands of blocks without bringing Blender to a halt.
+Strata is currently focused on solving the first stage of a Minecraft production pipeline: reconstructing real Minecraft worlds inside Blender in a way that remains practical to edit. Version 1 imports world data, rebuilds it using the user's own block library, and organizes the result into chunked collections for efficient viewport workflows. The screenshots below demonstrate the current implementation rather than future goals.
 
-### Responsive Viewport
-![Responsive Viewport](docs/images/forest_daytime.png)
-The built-in MC Chunk Workflow addon lets you toggle chunk visibility on the fly, keeping the viewport fast and responsive. Your entire dense forest scene remains completely render-ready in the background while you focus on local details.
+### Individual Chunk
+![Individual Chunk](docs/images/individual_chunk.png)
 
-### Night Cinematic
-![Night Cinematic](docs/images/night_scene.png)
-Strata provides production-ready lighting right out of the box using real, optimized geometry. This enables the rapid creation of moody, cinematic shots, taking full advantage of Blender's powerful render engines.
+A reconstructed Minecraft chunk inside Blender. Every block remains a real Blender object or instance, allowing artists to inspect, select, edit, replace, or animate individual elements. This forms the smallest building block of the pipeline and demonstrates how Strata reconstructs Minecraft data into editable Blender geometry rather than a static mesh.
 
-### Sky and Atmosphere
-![Sky and Atmosphere](docs/images/sky_clouds.png)
-Gain precise artistic control over each individual chunk and the broader environment. Strata allows you to stylize elements like clouds and sky, seamlessly blending voxel aesthetics with high-end atmospheric rendering.
+### Chunk Groups
+![Chunk Groups](docs/images/chunk_groups.png)
 
-### Character and Lighting
-![Character and Lighting](docs/images/steve_cave.png)
-Achieve stunning character integration with cinematic lighting capabilities. Whether it's a dynamic torch light in a deep cave or complex volumetric effects, Strata ensures characters sit perfectly within the imported voxel environments.
+Multiple chunks reconstructed together while preserving the same editable structure. As worlds become larger, chunk organization becomes increasingly important for viewport performance and scene management. Version 1 automatically generates chunk collections that make large environments significantly easier to navigate and edit inside Blender.
 
-### Addon Interface
-![Addon Interface - Locked](docs/images/addon_ui_1.png)
-![Addon Interface - Unlocked](docs/images/addon_ui_2.png)
-![Addon Interface - Options](docs/images/addon_ui_3.png)
-The custom MC Chunk Workflow panel resides directly in Blender's 3D Viewport. It provides immediate access to performance toggles, chunk locking, and ray-casting selection tools. This interface bridges the gap between raw Python pipeline outputs and intuitive artist workflows.
+### Full World Reconstruction
+![Full World Reconstruction](docs/images/full_world.jpg)
+
+A complete Minecraft world reconstructed inside Blender using the same pipeline. Even large environments retain the chunk organization established during import, allowing artists to work on manageable portions of the scene instead of a single monolithic world. This establishes the foundation upon which future production workflows can build.
 
 ---
 
-## Why Strata Exists
+## What Version 1 Delivers
 
-In the world of 3D production, technical artists and creators often find themselves solving the same problems repeatedly. Every new project requires custom scripts to import data, optimize geometry, manage materials, and set up render passes. When working with AI, this problem compounds; we spend countless hours writing the same complex prompts to guide AI models through intricate Blender workflows, only for that knowledge to be lost when the chat session ends.
+Version 1 is laser-focused on establishing a robust, deterministic infrastructure for Minecraft imports. It provides:
 
-Strata was built to break this cycle. We believe that hard-won production knowledge—the specialized techniques required to efficiently turn raw voxel data into cinematic scenes—should become reusable, systematic software. 
+- **Minecraft world reconstruction**: Accurately parsing and interpreting `.mca` region files.
+- **User block library population**: Dynamically mapping Minecraft block IDs to the user's custom Blender assets.
+- **Chunk generation**: Grouping geometry into 16x16 chunk collections for high-performance viewport navigation.
+- **Blender integration**: Custom add-on UI tools for hiding, showing, and managing chunks on the fly.
+- **SDK architecture**: A modular, 7-stage pure Python pipeline.
+- **MCP integration**: A dedicated Model Context Protocol server exposing the pipeline to AI agents.
+- **Pipeline foundation**: A robust starting point for future advanced 3D workflows.
 
-Instead of relying on fragile, one-off scripts, Strata captures these workflows as a robust, pure Python SDK featuring a deterministic 7-stage pipeline. This architecture guarantees reliable results, transforming raw `.mca` region files into beautifully structured Blender scenes every single time. 
-
-By building a proper plugin system, we ensure that Strata can adapt to various world readers, geometry backends, and render targets, extending its lifespan far beyond any single project. Furthermore, Strata acts as a crucial bridge between modern AI capabilities and professional 3D tools. Through its dedicated Model Context Protocol (MCP) server and socket-based Blender addon, AI assistants can now natively interact with your Blender session. They can query scene status, import worlds, and orchestrate complex pipeline operations on your behalf. 
-
-Strata is not just an import tool; it is a permanent repository for 3D production intelligence, designed so that the creative community can build upon, share, and continually refine these advanced workflows.
-
----
-
-## Features
-
-### Current (v0.1)
-- Parse real Minecraft Anvil saves (`.mca` region files)
-- 7-stage deterministic pipeline (Read → Resolve → Optimize → Chunk → Build → Render Prep → Animation Prep)
-- Chunk-based hidden-block culling (Stage 4) for massive geometry reduction
-- Geometry Nodes instancing backend (supports thousands of chunks and millions of blocks)
-- MC Chunk Workflow addon: toggle chunk visibility mid-session, lock chunks, show/hide all
-- Socket bridge: MCP server ↔ Blender main thread (thread-safe queue via `bpy.app.timers`)
-- 3 core MCP tools: `get_scene_status`, `list_block_library`, `import_minecraft_world`
-- Plugin system for world readers, geometry backends, and render targets
-- MIT license, easily pip-installable (`pip install -e .`)
-
-### Planned
-- Litematica schematic support (v0.2)
-- Unreal Engine render target (v0.3)
-- Animation timeline integration (v0.4)
-- PyPI distribution for easier installation
-- Web-based block map editor for rapid material assignments
+*(Note: Advanced cinematic features, procedural stylization, render automation, and complex lighting workflows belong to the roadmap and are not included in the V1 feature set.)*
 
 ---
 
