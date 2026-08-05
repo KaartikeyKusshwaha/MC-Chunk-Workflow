@@ -5,7 +5,7 @@ mutates and returns this same object -- see strata/stages/__init__.py.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 Block = Tuple[int, int, int, str]                        # (x, y, z, block_id)
 ChunkKey = Tuple[int, int]                                # (chunk_x, chunk_z)
@@ -23,3 +23,4 @@ class PipelineState:
     unmapped_block_ids: Set[str] = field(default_factory=set)
     render_target: str = "eevee_cycles"
     stats: Dict[str, object] = field(default_factory=dict)
+    environment_config: dict = field(default_factory=dict)

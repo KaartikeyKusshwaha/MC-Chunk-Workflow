@@ -85,3 +85,25 @@ This document outlines complete production workflows using the Strata pipeline. 
 
 **Common Mistakes:** Not starting the Blender Bridge first, which causes the agent's import command to fail when it tries to send data to Blender.
 **Expected Result:** A hands-free import process driven entirely by natural language commands.
+
+## 6. Environment & Cloud Setup
+
+**Purpose:** Add A1-style blocky Minecraft clouds, atmospheric fog, and sky/sun setup to an imported world.
+**Prerequisites:** A world already imported via Strata, Strata Bridge running.
+**Inputs:** Optional: HDRI .exr file path, cloud height, sun angle.
+
+**Steps:**
+1. Ensure you have an imported world in Blender (see Workflow 1).
+2. Start the Strata Bridge if not already running.
+3. Run `strata-mcp` in your terminal.
+4. Ask your AI agent: "Generate the environment with clouds at height 20 and sun angle 60."
+   (Agent uses `generate_environment` tool)
+5. Alternatively, use the Python SDK:
+   ```python
+   from strata import Pipeline
+   Pipeline().build_environment(cloud_height=20.0, sun_angle_deg=60.0)
+   ```
+6. Adjust cloud height, sun angle, or HDRI path to taste.
+
+**Common Mistakes:** Forgetting to start the bridge before calling generate_environment. The environment builders need a live Blender session.
+**Expected Result:** Blocky cloud layer, volumetric atmosphere, HDRI sky with zenith gradient, and visible sun with independent directional lighting.

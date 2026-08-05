@@ -24,6 +24,7 @@ from .stages import (
     ReadWorldStage, ResolveAssetsStage, OptimizeStage, ChunkManagerStage,
     BuildGeometryStage, RenderPrepStage, AnimationPrepStage,
 )
+from .environment import build_clouds, build_atmosphere, build_sky, build_sun, CloudConfig, AtmosphereConfig, SkyConfig, SunConfig
 from . import blender_io  # noqa: F401  (imported for save(); kept explicit for clarity)
 
 
@@ -62,6 +63,35 @@ class Pipeline:
 
     def prepare_animation(self) -> "Pipeline":
         self._state = AnimationPrepStage().run(self._state)
+        return self
+
+    def build_environment(
+        self,
+        enable_clouds: bool = True,
+        enable_atmosphere: bool = True,
+        enable_sky: bool = True,
+        enable_sun: bool = True,
+        cloud_height: float = 19.3,
+        sun_angle_deg: float = 45.0,
+        hdri_path: str = "",
+    ) -> "Pipeline":
+        """Stage 6b: Build environment (clouds, atmosphere, sky, sun)."""
+        import math
+        results = {}
+        if enable_clouds:
+            cloud_cfg = CloudConfig(height=cloud_height)
+            results["clouds"] = build_clouds(cloud_cfg)
+        if enable_atmosphere:
+            results["atmosphere"] = build_atmosphere(AtmosphereConfig())
+        if enable_sky:
+            sky_cfg = SkyConfig(hdri_path=hdri_path)
+            results["sky"] = build_sky(sky_cfg)
+        if enable_sun:
+            # Convert angle to radians for lamp rotation
+            angle_rad = math.radians(sun_angle_deg)
+            sun_cfg = SunConfig(lamp_rotation=(angle_rad, 0.0, -2.601))
+            results["sun"] = build_sun(sun_cfg)
+        self._state.environment_config = results
         return self
 
     def save(self, output_blend_path: str) -> "Pipeline":

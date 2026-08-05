@@ -22,7 +22,7 @@ import threading
 import traceback
 
 import bpy
-
+from . import environment_handlers
 DEFAULT_HOST = "localhost"
 DEFAULT_PORT = 9877  # blender-mcp defaults to 9876 -- kept distinct so both can run side by side
 
@@ -39,6 +39,11 @@ def register_command(name):
         _command_registry[name] = fn
         return fn
     return deco
+
+_command_registry["build_clouds"] = environment_handlers.handle_build_clouds
+_command_registry["build_atmosphere"] = environment_handlers.handle_build_atmosphere
+_command_registry["build_sky"] = environment_handlers.handle_build_sky
+_command_registry["build_sun"] = environment_handlers.handle_build_sun
 
 
 def _handle_client(conn):

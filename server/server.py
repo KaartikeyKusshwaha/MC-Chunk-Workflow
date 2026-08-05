@@ -67,6 +67,35 @@ def import_minecraft_world(
     }
 
 
+@mcp.tool()
+def generate_environment(
+    enable_clouds: bool = True,
+    enable_atmosphere: bool = True,
+    enable_sky: bool = True,
+    enable_sun: bool = True,
+    cloud_height: float = 19.3,
+    sun_angle_deg: float = 45.0,
+    hdri_path: str = "",
+) -> dict:
+    """
+    Generates A1-style blocky Minecraft clouds, atmospheric height fog,
+    HDRI sky with camera-ray preservation, and a visible sun mesh with
+    independent directional lighting. Call after import_minecraft_world
+    to complete a production-ready scene.
+    """
+    pipeline = Pipeline()
+    pipeline.build_environment(
+        enable_clouds=enable_clouds,
+        enable_atmosphere=enable_atmosphere,
+        enable_sky=enable_sky,
+        enable_sun=enable_sun,
+        cloud_height=cloud_height,
+        sun_angle_deg=sun_angle_deg,
+        hdri_path=hdri_path,
+    )
+    return pipeline.state.environment_config
+
+
 def main():
     mcp.run()
 
