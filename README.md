@@ -40,21 +40,28 @@ Multiple chunks reconstructed together while preserving the same editable struct
 
 A complete Minecraft world reconstructed inside Blender using the same pipeline. Even large environments retain the chunk organization established during import, allowing artists to work on manageable portions of the scene instead of a single monolithic world. This establishes the foundation upon which future production workflows can build.
 
+### Procedural Blocky Clouds & Atmosphere
+![Daytime Blocky Clouds](docs/images/clouds_day.png)
+![Nighttime Blocky Clouds](docs/images/clouds_night.png)
+
+Procedural Minecraft-style blocky clouds and atmospheric environment system reconstructed inside Blender. The pipeline automatically generates 2km 3D blocky cloud layer footprints featuring micro-normal noise bump shaders, bevel edges, and vertical height-gradient color ramps—adaptable across daytime and nighttime sky lighting setups.
+
 ---
 
 ## What Version 1 Delivers
 
-Version 1 is laser-focused on establishing a robust, deterministic infrastructure for Minecraft imports. It provides:
+Version 1 is laser-focused on establishing a robust, deterministic infrastructure for Minecraft imports and environment setup. It provides:
 
 - **Minecraft world reconstruction**: Accurately parsing and interpreting `.mca` region files.
 - **User block library population**: Dynamically mapping Minecraft block IDs to the user's custom Blender assets.
 - **Chunk generation**: Grouping geometry into 16x16 chunk collections for high-performance viewport navigation.
-- **Blender integration**: Custom add-on UI tools for hiding, showing, and managing chunks on the fly.
-- **SDK architecture**: A modular, 7-stage pure Python pipeline.
-- **MCP integration**: A dedicated Model Context Protocol server exposing the pipeline to AI agents.
+- **Procedural cloud & environment generation**: Automatic 2km blocky cloud layers, atmospheric height fog, HDRI sky preservation, and visible sun mesh with independent directional lighting.
+- **Blender integration**: Custom add-on UI tools for hiding, showing, and managing chunks and environments on the fly.
+- **SDK architecture**: A modular, 7-stage pure Python pipeline with environment extensions.
+- **MCP integration**: Dedicated Model Context Protocol tools (`import_minecraft_world`, `generate_environment`) exposing the pipeline to AI agents.
 - **Pipeline foundation**: A robust starting point for future advanced 3D workflows.
 
-*(Note: Advanced cinematic features, procedural stylization, render automation, and complex lighting workflows belong to the roadmap and are not included in the V1 feature set.)*
+*(Note: Stylized character animation rigs, Unreal Engine USD exports, and procedural biomes belong to the roadmap and are planned for future versions.)*
 
 ---
 
