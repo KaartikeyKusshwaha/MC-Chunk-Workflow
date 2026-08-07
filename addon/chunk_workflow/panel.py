@@ -56,9 +56,9 @@ class VIEW3D_PT_MCChunkWorkflow(bpy.types.Panel):
         # Block Edit Tools
         # ------------------------------------------------------------------
         layout.label(text="Block Edit Tools")
-        layout.operator("mc.screen_box_pick_block")
         layout.operator("mc.show_selected_chunk", icon="RESTRICT_VIEW_OFF")
         layout.operator("mc.show_selected_neighbors", icon="OUTLINER_COLLECTION")
+
 
         layout.separator()
 
