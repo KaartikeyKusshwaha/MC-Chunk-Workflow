@@ -43,18 +43,12 @@ class VIEW3D_PT_MCChunkWorkflow(bpy.types.Panel):
         row.operator("mc.viewport_performance_mode", icon="SHADING_SOLID")
         row.operator("mc.viewport_lookdev_mode", icon="MATERIAL")
 
-        row = layout.row(align=True)
-        row.operator("mc.show_rig_chunk", icon="SOLO_ON")
-        row.operator("mc.show_rig_neighbors", icon="OUTLINER_COLLECTION")
-
         # Terrain lock state indicator + toggle buttons
         locked = chunk_utils.terrain_selection_locked()
         layout.label(text=f"Terrain selection: {'LOCKED' if locked else 'UNLOCKED'}")
         row = layout.row(align=True)
         row.operator("mc.lock_terrain_selection", depress=locked, icon="LOCKED")
         row.operator("mc.unlock_terrain_selection", depress=not locked, icon="UNLOCKED")
-
-        layout.operator("mc.select_hero_rig", icon="ARMATURE_DATA")
 
         layout.separator()
 
@@ -63,10 +57,8 @@ class VIEW3D_PT_MCChunkWorkflow(bpy.types.Panel):
         # ------------------------------------------------------------------
         layout.label(text="Block Edit Tools")
         layout.operator("mc.screen_box_pick_block")
-        layout.operator("mc.ray_pick_block")
         layout.operator("mc.show_selected_chunk", icon="RESTRICT_VIEW_OFF")
         layout.operator("mc.show_selected_neighbors", icon="OUTLINER_COLLECTION")
-        layout.operator("mc.show_origin_radius", icon="WORLD")
 
         layout.separator()
 
@@ -74,6 +66,7 @@ class VIEW3D_PT_MCChunkWorkflow(bpy.types.Panel):
         layout.operator("mc.show_all_chunks", icon="HIDE_OFF")
         layout.operator("mc.final_render_state", icon="RENDER_STILL")
         layout.operator("mc.print_world_stats", icon="INFO")
+
 
 
 CLASSES = (VIEW3D_PT_MCChunkWorkflow,)

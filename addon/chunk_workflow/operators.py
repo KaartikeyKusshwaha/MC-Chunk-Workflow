@@ -30,18 +30,14 @@ class MC_OT_ViewportPerformanceMode(bpy.types.Operator):
 
     def execute(self, context):
         try:
-            result = chunk_utils.show_rig_area(radius=0)
-        except RuntimeError as exc:
-            self.report({"WARNING"}, str(exc))
-            return {"CANCELLED"}
+            chunk_utils.show_rig_area(radius=0)
+        except RuntimeError:
+            pass  # Hero rig is optional
         viewports = chunk_utils.configure_viewports("SOLID")
         context.scene["mc_viewport_mode"] = "PERFORMANCE"
-        self.report(
-            {"INFO"},
-            f"Performance mode: {result['shown']} chunks visible "
-            f"across {viewports} viewport(s)",
-        )
+        self.report({"INFO"}, f"Performance mode enabled in {viewports} viewport(s)")
         return {"FINISHED"}
+
 
 
 class MC_OT_ViewportLookdevMode(bpy.types.Operator):
